@@ -30,38 +30,7 @@ public:
     virtual std::string nameFromPosition(int pos) const = 0;
     virtual int totalFiles() const = 0;
 
-    class const_iterator  {
-    public:
-        const_iterator(const Archive *a, int pos = 0) : archive(a), position(pos) {}
-        const_iterator(const const_iterator& rhs) = default;
-
-        bool operator!= (const const_iterator& other) const {
-            return position != other.position;
-        }
-
-        std::string operator* () const {
-            return archive->nameFromPosition(position);
-        }
-
-        const const_iterator& operator++ () {
-            position++;
-            auto s = archive->nameFromPosition(position);
-            if(s == "")
-                position = archive->totalFiles();
-            return *this;
-        }
-    private:
-        const Archive *archive;
-        int position;
-    };
-
-    const_iterator begin() const {
-        return const_iterator(this);
-    }
-
-    const_iterator end() const {
-        return const_iterator(this, totalFiles());
-    }
+    virtual void extractAll(const std::string &targetDir) = 0;
 
     static Archive *open(const std::string &fileName, const std::string &targetDir = ".", int type = TYPE_ANY);
     static bool canHandle(const std::string &name);
